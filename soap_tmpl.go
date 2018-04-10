@@ -12,7 +12,8 @@ func dialTimeout(network, addr string) (net.Conn, error) {
 }
 
 type SOAPEnvelope struct {
-	XMLName xml.Name ` + "`" + `xml:"http://schemas.xmlsoap.org/soap/envelope/ Envelope"` + "`" + `
+	XMLName xml.Name ` + "`" + `xml:"soap:Envelope"` + "`" + `
+	Namespace string ` + "`" + `xml:"xmlns:soap,attr"` + "`" + `
 	Header *SOAPHeader
 	Body SOAPBody
 }
@@ -24,7 +25,7 @@ type SOAPHeader struct {
 }
 
 type SOAPBody struct {
-	XMLName xml.Name ` + "`" + `xml:"http://schemas.xmlsoap.org/soap/envelope/ Body"` + "`" + `
+	XMLName xml.Name ` + "`" + `xml:"soap:Body"` + "`" + `
 
 	Fault   *SOAPFault ` + "`" + `xml:",omitempty"` + "`" + `
 	Content interface{} ` + "`" + `xml:",omitempty"` + "`" + `
@@ -206,7 +207,9 @@ func (s *SOAPClient) AddHeader(header interface{}) {
 }
 
 func (s *SOAPClient) Call(soapAction string, request, response interface{}) error {
-	envelope := SOAPEnvelope{}
+	envelope := SOAPEnvelope{
+		Namespace: "http://schemas.xmlsoap.org/soap/envelope/",
+	}
 
 	if s.headers != nil && len(s.headers) > 0 {
 		soapHeader := &SOAPHeader{Items: make([]interface{}, len(s.headers))}

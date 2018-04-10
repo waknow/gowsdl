@@ -269,6 +269,7 @@ func (g *GoWSDL) genTypes() ([]byte, error) {
 		"comment":              comment,
 		"removeNS":             removeNS,
 		"goString":             goString,
+		"newNamespace":         newNamespace,
 	}
 
 	data := new(bytes.Buffer)
@@ -557,4 +558,25 @@ func comment(text string) string {
 		return output
 	}
 	return ""
+}
+
+type Number struct {
+	mutex sync.Mutex
+	n     int64
+}
+
+func (n *Number) Next() int64 {
+	n.mutex.Lock()
+	defer n.mutex.Unlock()
+
+	cur := n.n
+	n.n++
+	return cur
+}
+
+var nsNumber = Number{}
+
+func newNamespace() string {
+	n := nsNumber.Next()
+	return fmt.Sprintf("ns%d", n)
 }

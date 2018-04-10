@@ -110,9 +110,11 @@ var typesTmpl = `
 
 	{{range .ComplexTypes}}
 		{{/* ComplexTypeGlobal */}}
+		{{ $namespace := newNamespace}}
 		{{$name := replaceReservedWords .Name | makePublic}}
 		type {{$name}} struct {
-			XMLName xml.Name ` + "`xml:\"{{$targetNamespace}} {{.Name}}\"`" + `
+			XMLName xml.Name ` + "`xml:\"{{$namespace}}:{{.Name}}\"`" + `
+			Nameapce string ` + "`xml:\"xmlns:{{$namespace}},attr\"`" + `
 			{{if ne .ComplexContent.Extension.Base ""}}
 				{{template "ComplexContent" .ComplexContent}}
 			{{else if ne .SimpleContent.Extension.Base ""}}
